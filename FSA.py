@@ -36,8 +36,8 @@ class FSA:
         self.transitions[trans] = Transition(trans)
 
     def get_state(self, state):
-        if state in self.states:
-            return self.states[state]
+        if state in self.states.keys():
+            return self.states.get(state)
         else:
             return -1
 

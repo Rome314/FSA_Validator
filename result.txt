@@ -1,0 +1,3 @@
+FSA is complete
+Warning:
+W1: Accepting state is not defined

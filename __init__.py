@@ -9,6 +9,7 @@ def main():
     output = open(out, "w")
     data = parser.parse_input(inp, out)
     machine = FSA.FSA()
+    incomplite = False
 
     for state in data[0]:
         machine.add_state(state)
@@ -17,7 +18,7 @@ def main():
         machine.add_transition(transition)
 
     if machine.get_state(data[2]) == -1:
-        error = E1
+        error = "E1: A state '" + data[2] + "' is not in set of states"
         output.write("Error:\n" + error)
         output.close()
         exit(0)
@@ -30,25 +31,30 @@ def main():
         for fin_state in data[3]:
             state = machine.get_state(fin_state)
             if state == -1:
-                error = E1
+                error = "E1: A state '" + fin_state + "' is not in set of states"
                 output.write("Error:\n" + error)
                 output.close()
                 exit(0)
             else:
                 machine.final.append(state)
-
     for path in data[4]:
         elements = path.split(">")
-        if ((machine.get_state(elements[0]) == -1) or (machine.get_state(elements[2]) == -1)):
-            error = E1
+        if (machine.get_state(elements[0]) == -1):
+            error = "E1: A state '" + elements[0] + "' is not in set of states"
             output.write("Error:\n" + error)
             output.close()
             exit(0)
+        elif(machine.get_state(elements[2]) == -1):
+            error = "E1: A state '" + elements[0] + "' is not in set of states"
+            output.write("Error:\n" + error)
+            output.close()
+            exit(0)
+
         else:
             state_left = machine.get_state(elements[0])
             state_right = machine.get_state(elements[2])
             if (machine.get_transition(elements[1]) == -1):
-                error = "A transition '" + elements[1] + "' is not represented in the alphabet"
+                error = "E3: A transition '" + elements[1] + "' is not represented in the alphabet"
                 output.write("Error:\n" + error)
                 output.close()
                 exit(0)
@@ -63,10 +69,50 @@ def main():
                     state_left.outputs = list(set(state_left.outputs))
                     state_right.inputs = list(set(state_right.inputs))
 
+
+    # for fin in machine.final:
+    #     if len(fin.inputs) == 0:
+    #         error = E2
+    #         output.write("Error:\n" + error)
+    #         output.close()
+    #         exit(0)
+
     for state in machine.states.values():
-        if len(state.inputs) == 0:
+        # print(state.inputs)
+        # print(state.outputs)
+        # print(state.commands)
+        if (len(state.inputs) == 0) and (len(state.outputs) == 0) and (len(machine.states.keys()) > 1):
+            # machine.warnings.append(W2)
             error = E2
             output.write("Error:\n" + error)
+            output.close()
+            exit(0)
+        if len(state.commands.keys()) < len(machine.transitions):
+            incomplite = True
+
+        if (len(state.inputs) == 0) and (len(machine.states.keys()) != 1):
+            machine.warnings.append(W2)
+        # keys1 = state.commands.keys()
+        # keys2 = list(set(keys1))
+        # if (len(keys1) != len(keys2)):
+        #     machine.warnings.append(W3)
+
+    machine.warnings = list(set(machine.warnings))
+    machine.warnings.sort()
+    if incomplite:
+        output.write(R2)
+        if len(machine.warnings) > 0:
+            output.write("\nWarning:")
+            for i in machine.warnings:
+                output.write("\n" + i)
+            output.close()
+            exit(0)
+    else:
+        output.write(R1)
+        if len(machine.warnings) > 0:
+            output.write("\nWarning:")
+            for i in machine.warnings:
+                output.write("\n" + i)
             output.close()
             exit(0)
 

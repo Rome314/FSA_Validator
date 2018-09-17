@@ -58,9 +58,9 @@ def parse_input(inp: str, out: str):
         exit(0)
 
     line = inp_file.readline()
-    line.strip().replace(" ", "")
+    line = line.strip().replace(" ", "").split("}")[0]
     if line.startswith("trans={"):
-        trans_line = line[7:-1]
+        trans_line = line[7:]
         trans = trans_line.split(",")
     else:
         error = E5
