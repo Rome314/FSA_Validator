@@ -1,9 +1,10 @@
 from string_stuff import *
 
+#Parser file for input
 
 def parse_input(inp: str, out: str):
-    inp_file = open(inp,"r")
-    out_file = open(out,"w")
+    inp_file = open(inp, "r")
+    out_file = open(out, "w")
     line = inp_file.readline()
     line.strip().replace(" ", "")
     if line.startswith("states={"):
@@ -68,4 +69,4 @@ def parse_input(inp: str, out: str):
         out_file.close()
         exit(0)
 
-    return [states,alpha,init_state,finite_states,trans]
+    return [states, alpha, init_state, finite_states, trans] #Returning list with information which will need to create FSA
